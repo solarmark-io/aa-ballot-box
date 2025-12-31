@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = example
+source = ballotbox
 
 [report]
 exclude_lines =

@@ -5,16 +5,18 @@ requires = [
 ]
 
 [project]
-name = "aa-example-plugin"
-description = "Example Plugin for Alliance Auth (GitHub Version)"
+name = "aa-ballot-box"
+description = "Ballot Box/Poll System Plugin for Alliance Auth"
 readme = "README.md"
 keywords = [
     "allianceauth",
-    "example",
+    "poll",
+    "ballot",
+    "vote",
 ]
 license = { file = "LICENSE" }
 authors = [
-    { name = "Peter Pfeufer", email = "develop@ppfeufer.de" },
+    { name = "Valiantiam", email = "admin@solarmark.io" },
 ]
 requires-python = ">=3.10,<3.14"
 classifiers = [
@@ -39,13 +41,13 @@ dynamic = [
 dependencies = [
     "allianceauth>=4.3.1,<5",
 ]
-urls.Changelog = "https://github.com/ppfeufer/aa-example-plugin/blob/master/CHANGELOG.md"
-urls.Tracker = "https://github.com/ppfeufer/aa-example-plugin/issues"
+urls.Changelog = "https://github.com/solarmark-io/aa-ballot-box/blob/master/CHANGELOG.md"
+urls.Tracker = "https://github.com/solarmark-io/aa-ballot-box/issues"
 
 [tool.hatch.version]
-path = "example/__init__.py"
+path = "aa-ballot-box/__init__.py"
 
 [tool.hatch.build]
 include = [
-    "/example",
+    "/aa-ballot-box",
 ]

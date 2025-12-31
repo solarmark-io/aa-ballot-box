@@ -8,7 +8,7 @@ from allianceauth import hooks
 from allianceauth.services.hooks import MenuItemHook, UrlHook
 
 # AA Example App
-from example import urls
+from ballotbox import urls
 
 
 class ExampleMenuItem(MenuItemHook):
@@ -18,10 +18,10 @@ class ExampleMenuItem(MenuItemHook):
         # setup menu entry for sidebar
         MenuItemHook.__init__(
             self,
-            _("Example App"),
+            _("Ballot Box"),
             "fas fa-cube fa-fw",
             "example:index",
-            navactive=["example:"],
+            navactive=["ballot-box:"],
         )
 
     def render(self, request):
@@ -44,4 +44,4 @@ def register_menu():
 def register_urls():
     """Register app urls"""
 
-    return UrlHook(urls, "example", r"^example/")
+    return UrlHook(urls, "aa-ballot-box", r"^aa-ballot-box/")

@@ -1,5 +1,5 @@
-appname = example
-package = example
+appname = ballotbox
+package = ballotbox
 
 # Default goal
 .DEFAULT_GOAL := help

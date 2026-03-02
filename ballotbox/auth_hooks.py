@@ -1,47 +1,30 @@
 """Hook into Alliance Auth"""
-
-# Django
 from django.utils.translation import gettext_lazy as _
-
-# Alliance Auth
 from allianceauth import hooks
 from allianceauth.services.hooks import MenuItemHook, UrlHook
-
-# AA Example App
 from ballotbox import urls
 
-
-class ExampleMenuItem(MenuItemHook):
-    """This class ensures only authorized users will see the menu entry"""
-
+class BallotBoxMenuItem(MenuItemHook):
     def __init__(self):
         # setup menu entry for sidebar
         MenuItemHook.__init__(
             self,
             _("Ballot Box"),
-            "fas fa-cube fa-fw",
-            "example:index",
-            navactive=["ballot-box:"],
+            "fas fa-vote-yea fa-fw",
+            "ballotbox:index", # Fixed routing
+            navactive=["ballotbox:"], # Fixed routing
         )
 
     def render(self, request):
-        """Render the menu item"""
-
-        if request.user.has_perm("example.basic_access"):
+        if request.user.has_perm("ballotbox.basic_access"): # Fixed permission
             return MenuItemHook.render(self, request)
-
         return ""
-
 
 @hooks.register("menu_item_hook")
 def register_menu():
-    """Register the menu item"""
-
-    return ExampleMenuItem()
-
+    return BallotBoxMenuItem()
 
 @hooks.register("url_hook")
 def register_urls():
-    """Register app urls"""
-
-    return UrlHook(urls, "aa-ballot-box", r"^aa-ballot-box/")
+    # Fixed URL routing namespace
+    return UrlHook(urls, "ballotbox", r"^ballotbox/")

@@ -1,4 +1,5 @@
 {% extends 'ballotbox/base.html' %}
+{% load ballotbox_tags %}  ```
 
 {% block details %}
 <div class="row">
@@ -7,7 +8,7 @@
             <div class="card-header"><div class="card-title">{{ ballot.title }}</div></div>
             <div class="card-body">
                 <div class="mb-4">
-                    {{ ballot.description|linebreaks }}
+                    {{ ballot.description|render_markdown }}
                 </div>
                 <hr>
                 <form method="post">

@@ -45,9 +45,9 @@ urls.Changelog = "https://github.com/solarmark-io/aa-ballot-box/blob/master/CHAN
 urls.Tracker = "https://github.com/solarmark-io/aa-ballot-box/issues"
 
 [tool.hatch.version]
-path = "aa-ballot-box/__init__.py"
+path = "ballotbox/__init__.py"
 
 [tool.hatch.build]
 include = [
-    "/aa-ballot-box",
+    "/ballotbox",
 ]

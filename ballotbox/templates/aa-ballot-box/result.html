@@ -1,0 +1,22 @@
+{% extends 'ballotbox/base.html' %}
+
+{% block details %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card card-info">
+            <div class="card-header">
+                <div class="card-title">Results: {{ ballot.title }}</div>
+            </div>
+            <div class="card-body">
+                <h5 class="mb-4">Total Votes Cast: {{ total_votes }}</h5>
+                {% for option in results %}
+                    <div class="mb-3">
+                        <strong>{{ option.text }}</strong> - {{ option.vote_count }} votes
+                    </div>
+                {% endfor %}
+                <a href="{% url 'ballotbox:index' %}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

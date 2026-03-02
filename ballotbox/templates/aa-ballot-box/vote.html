@@ -1,0 +1,32 @@
+{% extends 'ballotbox/base.html' %}
+
+{% block details %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card card-primary">
+            <div class="card-header"><div class="card-title">{{ ballot.title }}</div></div>
+            <div class="card-body">
+                <div class="mb-4">
+                    {{ ballot.description|linebreaks }}
+                </div>
+                <hr>
+                <form method="post">
+                    {% csrf_token %}
+                    <h4 class="mb-3">Official Ballot:</h4>
+                    {% for option in ballot.options.all %}
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="option" id="opt{{ option.id }}" value="{{ option.id }}" required>
+                            <label class="form-check-label" for="opt{{ option.id }}">
+                                {{ option.text }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success w-100">Cast Secure Vote</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,13 +1,11 @@
 """App URLs"""
-
-# Django
 from django.urls import path
-
-# AA Ballot Box App
 from ballotbox import views
 
-app_name: str = "ballotbox"  # pylint: disable=invalid-name
+app_name = "ballotbox"
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path("vote/<int:ballot_id>/", views.vote_view, name="vote"),
+    path("results/<int:ballot_id>/", views.admin_results, name="results"),
 ]

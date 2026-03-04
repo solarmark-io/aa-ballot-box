@@ -4,6 +4,7 @@
 {% block details %}
 <div class="row mt-4">
     <div class="col-md-8 offset-md-2">
+        
         <h2 class="text-center mb-4">Active Measures</h2>
         
         {% if available_ballots %}
@@ -20,13 +21,17 @@
                     {% endif %}
 
                     <div class="d-flex gap-2">
-                        <a href="{% url 'ballotbox:vote' ballot.id %}" class="btn {% if ballot.user_vote %}btn-warning{% else %}btn-success{% endif %}">
-                            {% if ballot.user_vote %}
-                                <i class="fas fa-edit fa-fw"></i> Change Vote
-                            {% else %}
-                                <i class="fas fa-check-to-slot fa-fw"></i> Review & Vote
-                            {% endif %}
-                        </a>
+                        {% if ballot.user_can_vote %}
+                            <a href="{% url 'ballotbox:vote' ballot.id %}" class="btn {% if ballot.user_vote %}btn-warning{% else %}btn-success{% endif %}">
+                                {% if ballot.user_vote %}
+                                    <i class="fas fa-edit fa-fw"></i> Change Vote
+                                {% else %}
+                                    <i class="fas fa-check-to-slot fa-fw"></i> Review & Vote
+                                {% endif %}
+                            </a>
+                        {% else %}
+                             <span class="btn btn-secondary disabled" aria-disabled="true">Not Eligible to Vote</span>
+                        {% endif %}
                         
                         {% if ballot.can_view_results %}
                             <a href="{% url 'ballotbox:results' ballot.id %}" class="btn btn-info text-white">
@@ -37,19 +42,23 @@
                 </div>
             </div>
             {% endfor %}
+        {% else %}
             <div class="alert alert-info text-center shadow-sm">
-                There are no active measures requiring your vote right now.
+                There are no active measures available right now.
             </div>
         {% endif %}
 
         {% if past_ballots %}
-            <h3 class="text-center mt-5 mb-3">Past & Voted Measures</h3>
+            <h3 class="text-center mt-5 mb-3">Past & Closed Measures</h3>
             <div class="list-group shadow-sm mb-5">
                 {% for ballot in past_ballots %}
                     <div class="list-group-item d-flex justify-content-between align-items-center py-3">
                         <div>
                             <h5 class="mb-1 text-dark">{{ ballot.title }}</h5>
                             <small class="text-muted">Closed: {{ ballot.closes_at|date:"M j, Y" }}</small>
+                            {% if ballot.user_vote %}
+                                <br><small class="text-success"><i class="fas fa-check fa-fw"></i> Voted: {{ ballot.user_vote.option.text }}</small>
+                            {% endif %}
                         </div>
                         
                         {% if ballot.can_view_results %}
@@ -65,6 +74,7 @@
                 {% endfor %}
             </div>
         {% endif %}
+        
     </div>
 </div>
 {% endblock %}

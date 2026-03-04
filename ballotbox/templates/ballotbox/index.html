@@ -11,14 +11,32 @@
             <div class="card card-primary mb-3 shadow-sm">
                 <div class="card-header"><div class="card-title">{{ ballot.title }}</div></div>
                 <div class="card-body">
-                    <p class="text-muted"><i class="fas fa-clock fa-fw"></i> Closes: {{ ballot.closes_at }}</p>
-                    <a href="{% url 'ballotbox:vote' ballot.id %}" class="btn btn-success">
-                        <i class="fas fa-check-to-slot fa-fw"></i> Review & Vote
-                    </a>
+                    <p class="text-muted mb-2"><i class="fas fa-clock fa-fw"></i> Closes: {{ ballot.closes_at }}</p>
+                    
+                    {% if ballot.user_vote %}
+                        <div class="alert alert-success py-2 mb-3">
+                            <i class="fas fa-check-circle fa-fw"></i> You voted: <strong>{{ ballot.user_vote.option.text }}</strong>
+                        </div>
+                    {% endif %}
+
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'ballotbox:vote' ballot.id %}" class="btn {% if ballot.user_vote %}btn-warning{% else %}btn-success{% endif %}">
+                            {% if ballot.user_vote %}
+                                <i class="fas fa-edit fa-fw"></i> Change Vote
+                            {% else %}
+                                <i class="fas fa-check-to-slot fa-fw"></i> Review & Vote
+                            {% endif %}
+                        </a>
+                        
+                        {% if ballot.can_view_results %}
+                            <a href="{% url 'ballotbox:results' ballot.id %}" class="btn btn-info text-white">
+                                <i class="fas fa-chart-pie fa-fw"></i> View Live Results
+                            </a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             {% endfor %}
-        {% else %}
             <div class="alert alert-info text-center shadow-sm">
                 There are no active measures requiring your vote right now.
             </div>

@@ -9,54 +9,57 @@ from .models import Ballot, BallotOption, Vote
 @login_required
 @permission_required("ballotbox.basic_access")
 def index(request):
-    """List available ballots."""
     now = timezone.now()
     active_ballots = Ballot.objects.filter(closes_at__gt=now).order_by('-created_at')
+    closed_ballots = Ballot.objects.filter(closes_at__lte=now).order_by('-closes_at')
     
-    # Only show active ballots they are eligible for and haven't voted on
-    available_ballots = [b for b in active_ballots if b.user_can_vote(request.user)]
-    
-    # Fetch past/voted ballots
-    all_past = Ballot.objects.filter(closes_at__lte=now).order_by('-closes_at') | \
-               Ballot.objects.filter(vote__user=request.user)
-               
-    # Filter past ballots so you only see polls meant for your group/state
-    past_ballots = []
-    for b in set(all_past):
-        if b.is_eligible(request.user) or request.user.has_perm('ballotbox.manage_ballots'):
-            # We inject a temporary variable so the HTML template knows whether to render a "View Results" button
+    available_ballots = []
+    for b in active_ballots:
+        if b.is_eligible(request.user):
+            b.user_vote = Vote.objects.filter(ballot=b, user=request.user).first()
             b.can_view_results = b.user_can_view_results(request.user)
+            available_ballots.append(b)
+            
+    past_ballots = []
+    for b in closed_ballots:
+        if b.is_eligible(request.user) or request.user.has_perm('ballotbox.manage_ballots'):
+            b.can_view_results = b.user_can_view_results(request.user)
+            b.user_vote = Vote.objects.filter(ballot=b, user=request.user).first()
             past_ballots.append(b)
-    
-    context = {
+            
+    return render(request, "ballotbox/index.html", {
         'available_ballots': available_ballots,
         'past_ballots': past_ballots
-    }
-    return render(request, "ballotbox/index.html", context)
+    })
 
 @login_required
 @permission_required("ballotbox.basic_access")
 def vote_view(request, ballot_id):
-    """View for casting a vote."""
     ballot = get_object_or_404(Ballot, id=ballot_id)
 
     if not ballot.is_active():
         messages.error(request, "Voting has closed for this measure.")
         return redirect('ballotbox:index')
     
-    if not ballot.user_can_vote(request.user):
-        messages.error(request, "You are not eligible to vote or have already voted.")
+    if not ballot.is_eligible(request.user):
+        messages.error(request, "You are not eligible to vote on this measure.")
         return redirect('ballotbox:index')
+
+    current_vote = Vote.objects.filter(ballot=ballot, user=request.user).first()
 
     if request.method == 'POST':
         option_id = request.POST.get('option')
         option = get_object_or_404(BallotOption, id=option_id, ballot=ballot)
         
-        Vote.objects.create(user=request.user, ballot=ballot, option=option)
+        # This will update their existing vote, or create a new one if it's their first time
+        Vote.objects.update_or_create(
+            user=request.user, ballot=ballot, 
+            defaults={'option': option}
+        )
         messages.success(request, "Your vote has been recorded securely.")
         return redirect('ballotbox:index')
 
-    return render(request, 'ballotbox/vote.html', {'ballot': ballot})
+    return render(request, 'ballotbox/vote.html', {'ballot': ballot, 'current_vote': current_vote})
 
 @login_required
 @permission_required('ballotbox.basic_access')

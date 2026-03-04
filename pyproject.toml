@@ -40,6 +40,7 @@ dynamic = [
 ]
 dependencies = [
     "allianceauth>=4.3.1,<5",
+    "markdown>=3.0",
 ]
 urls.Changelog = "https://github.com/solarmark-io/aa-ballot-box/blob/master/CHANGELOG.md"
 urls.Tracker = "https://github.com/solarmark-io/aa-ballot-box/issues"

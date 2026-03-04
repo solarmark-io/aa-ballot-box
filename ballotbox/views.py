@@ -8,14 +8,20 @@ from .models import Ballot, BallotOption, Vote
 
 @login_required
 @permission_required("ballotbox.basic_access")
+@login_required
+@permission_required("ballotbox.basic_access")
 def index(request):
     now = timezone.now()
+    
+    # 1. Strictly split by time
     active_ballots = Ballot.objects.filter(closes_at__gt=now).order_by('-created_at')
     closed_ballots = Ballot.objects.filter(closes_at__lte=now).order_by('-closes_at')
     
     available_ballots = []
     for b in active_ballots:
-        if b.is_eligible(request.user):
+        # Show it if they are eligible OR if they are an admin who needs to monitor it
+        if b.is_eligible(request.user) or request.user.has_perm('ballotbox.manage_ballots'):
+            b.user_can_vote = b.is_eligible(request.user) # Explicitly pass voting rights to the template
             b.user_vote = Vote.objects.filter(ballot=b, user=request.user).first()
             b.can_view_results = b.user_can_view_results(request.user)
             available_ballots.append(b)

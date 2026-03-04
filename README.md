@@ -1,6 +1,8 @@
 # Alliance Auth Ballot Box
 
-A secure, feature-rich polling and voting application for Alliance Auth. Empower your alliance leadership to create targeted, verifiable measures and gather community feedback effortlessly.
+A  polling and voting application for Alliance Auth.
+<img width="934" height="762" alt="image" src="https://github.com/user-attachments/assets/bb3935c9-2c3e-4783-bfd8-1f8829bce428" />
+
 
 ## ✨ Key Features
 

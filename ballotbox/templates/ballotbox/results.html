@@ -11,9 +11,14 @@
             <div class="card-body">
                 <h5 class="text-center mb-4">Total Votes Cast: {{ total_votes }}</h5>
                 
-                <div class="mb-4">
-                    <h5 class="fw-bold mb-2 text-secondary">Measure Description</h5>
-                    <div class="p-3 bg-light border rounded">
+                <div class="text-center mb-4">
+                    <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#descriptionCollapse" aria-expanded="false" aria-controls="descriptionCollapse">
+                        <i class="fas fa-file-alt fa-fw"></i> View Measure Description
+                    </button>
+                </div>
+                
+                <div class="collapse mb-4" id="descriptionCollapse">
+                    <div class="p-4 border rounded">
                         {{ ballot.description|render_markdown }}
                     </div>
                 </div>

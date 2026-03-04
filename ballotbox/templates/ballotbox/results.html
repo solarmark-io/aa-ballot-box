@@ -3,20 +3,94 @@
 {% block details %}
 <div class="row">
     <div class="col-md-8 offset-md-2">
-        <div class="card card-info">
+        <div class="card card-info shadow-sm">
             <div class="card-header">
                 <div class="card-title">Results: {{ ballot.title }}</div>
             </div>
             <div class="card-body">
-                <h5 class="mb-4">Total Votes Cast: {{ total_votes }}</h5>
+                <h5 class="text-center mb-4">Total Votes Cast: {{ total_votes }}</h5>
+                
+                {% if total_votes > 0 %}
+                <div class="mb-5" style="position: relative; height: 300px; width: 100%;">
+                    <canvas id="resultsChart"></canvas>
+                </div>
+                {% else %}
+                <div class="alert alert-warning text-center">
+                    No votes have been cast on this measure yet.
+                </div>
+                {% endif %}
+
+                <hr>
+
+                <h5 class="mb-3">Vote Breakdown:</h5>
+                <ul class="list-group mb-4">
                 {% for option in results %}
-                    <div class="mb-3">
-                        <strong>{{ option.text }}</strong> - {{ option.vote_count }} votes
-                    </div>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ option.text }}
+                        <span class="badge bg-primary rounded-pill">{{ option.vote_count }}</span>
+                    </li>
                 {% endfor %}
-                <a href="{% url 'ballotbox:index' %}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+                </ul>
+
+                <div class="text-center">
+                    <a href="{% url 'ballotbox:index' %}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Only load the chart if there are actually votes
+        {% if total_votes > 0 %}
+        const ctx = document.getElementById('resultsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [
+                    {% for option in results %}
+                        "{{ option.text|escapejs }}",
+                    {% endfor %}
+                ],
+                datasets: [{
+                    label: 'Votes',
+                    data: [
+                        {% for option in results %}
+                            {{ option.vote_count }},
+                        {% endfor %}
+                    ],
+                    backgroundColor: [
+                        '#3498db', // Blue
+                        '#2ecc71', // Green
+                        '#e74c3c', // Red
+                        '#f1c40f', // Yellow
+                        '#9b59b6', // Purple
+                        '#e67e22', // Orange
+                        '#1abc9c', // Teal
+                        '#34495e'  // Dark Gray
+                    ],
+                    borderWidth: 1,
+                    borderColor: '#ffffff',
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: { size: 14 }
+                        }
+                    }
+                }
+            }
+        });
+        {% endif %}
+    });
+</script>
 {% endblock %}

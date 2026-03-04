@@ -6,7 +6,7 @@ from allianceauth.authentication.models import State
 
 class Ballot(models.Model):
     title = models.CharField(max_length=200)
-    description = models.TextField(help_text="Detailed explanation of the measure. Supports Markdown/HTML if your templates allow it.")
+    description = models.TextField(help_text="Detailed explanation of the measure. Supports Markdown.")
     created_at = models.DateTimeField(auto_now_add=True)
     closes_at = models.DateTimeField()
     

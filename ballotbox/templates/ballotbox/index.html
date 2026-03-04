@@ -2,31 +2,48 @@
 {% load i18n %}
 
 {% block details %}
-<div class="row">
+<div class="row mt-4">
     <div class="col-md-8 offset-md-2">
         <h2 class="text-center mb-4">Eye Roll Active Measures</h2>
         
         {% if available_ballots %}
             {% for ballot in available_ballots %}
-            <div class="card card-primary mb-3">
+            <div class="card card-primary mb-3 shadow-sm">
                 <div class="card-header"><div class="card-title">{{ ballot.title }}</div></div>
                 <div class="card-body">
-                    <p class="text-muted">Closes: {{ ballot.closes_at }}</p>
-                    <a href="{% url 'ballotbox:vote' ballot.id %}" class="btn btn-success">Review & Vote</a>
+                    <p class="text-muted"><i class="fas fa-clock fa-fw"></i> Closes: {{ ballot.closes_at }}</p>
+                    <a href="{% url 'ballotbox:vote' ballot.id %}" class="btn btn-success">
+                        <i class="fas fa-check-to-slot fa-fw"></i> Review & Vote
+                    </a>
                 </div>
             </div>
             {% endfor %}
         {% else %}
-            <div class="alert alert-info text-center">There are no active measures requiring your vote right now.</div>
+            <div class="alert alert-info text-center shadow-sm">
+                There are no active measures requiring your vote right now.
+            </div>
         {% endif %}
 
-        {% if perms.ballotbox.manage_ballots %}
-            <h3 class="text-center mt-5 mb-3">Leadership Results</h3>
-            <div class="list-group">
+        {% if past_ballots %}
+            <h3 class="text-center mt-5 mb-3">Past & Voted Measures</h3>
+            <div class="list-group shadow-sm mb-5">
                 {% for ballot in past_ballots %}
-                    <a href="{% url 'ballotbox:results' ballot.id %}" class="list-group-item list-group-item-action">
-                        {{ ballot.title }} - View Results
-                    </a>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <h5 class="mb-1 text-dark">{{ ballot.title }}</h5>
+                            <small class="text-muted">Closed: {{ ballot.closes_at|date:"M j, Y" }}</small>
+                        </div>
+                        
+                        {% if ballot.can_view_results %}
+                            <a href="{% url 'ballotbox:results' ballot.id %}" class="btn btn-info text-white btn-sm">
+                                <i class="fas fa-chart-pie fa-fw"></i> View Results
+                            </a>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6">
+                                <i class="fas fa-lock fa-fw"></i> Results Private
+                            </span>
+                        {% endif %}
+                    </div>
                 {% endfor %}
             </div>
         {% endif %}
